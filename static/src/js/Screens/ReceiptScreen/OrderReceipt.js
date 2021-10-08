@@ -66,7 +66,7 @@ odoo.define('pos_ticket_fel.OrderReceipt', function(require) {
                                     // console.log(order)
                                     state.feel_numero_autorizacion = facturas[0].feel_numero_autorizacion;
                                     state.feel_serie = facturas[0].feel_serie;
-                                    state.feel_numero = facturas[0].feel_serie;
+                                    state.feel_numero = facturas[0].feel_numero;
                                     // state.nombre_diario = direccion_id.name;
                                     // state.direccion = direccion_id.street +" " + direccion_id.street2 + ", " + direccion_id.city;
                                     state.certificador_fel = 'DIGIFACT';
