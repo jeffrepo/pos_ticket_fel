@@ -5,8 +5,13 @@
         <xpath expr="//div[hasclass('pos-receipt-contact')]" position="replace">
             <!-- <t t-esc="state.nombre_diario"/><br/>
             <t t-esc="state.direccion"/><br/> -->
-            <t t-esc="receipt.company.name"/><br/>
-            NIT: <t t-esc="receipt.company.vat"/><br/>
+            <center>
+                <t t-esc="receipt.company.name"/><br/>
+                NIT: <t t-esc="receipt.company.vat"/><br/>
+                <t t-if="receipt.company.company_registry">
+                    <t t-esc="receipt.company.company_registry"/>
+                </t>
+            </center>
             <br/>
 
             <t t-if="state.feel_serie">
@@ -31,22 +36,24 @@
             <br/>
             <div class="info_certificacion">
                 <t t-if="state.feel_numero_autorizacion">
-                  <div id="qrcode"></div>
-                  <script type="text/javascript">
-                    var qr_string = "<t t-esc="state.qr_string"/>";
-                    new QRCode(document.getElementById("qrcode"), qr_string);
-                  </script>
+                  <center>
+                      <div id="qrcode"></div>
+                      <script type="text/javascript">
+                        var qr_string = "<t t-esc="state.qr_string"/>";
+                        new QRCode(document.getElementById("qrcode"), qr_string);
+                      </script>
 
-                  <div class="info_certificador">
-                      Certificador<br/>
-                      DIGIFACT, S.A.<br/>
-                      NIT: 77454820<br/>
-                  </div>
+                      <div class="info_certificador">
+                          Certificador<br/>
+                          DIGIFACT, S.A.<br/>
+                          NIT: 77454820<br/>
+                      </div>
 
-                    Autorización: <t t-esc="state.feel_numero_autorizacion || ''"/><br/>
-                    Fecha Certificación: <t t-esc="receipt.date.localestring"/>
+                        Autorización: <t t-esc="state.feel_numero_autorizacion || ''"/><br/>
+                        Fecha Certificación: <t t-esc="receipt.date.localestring"/>
+                  </center>
                 </t>
-                Sujeto a pagos trimestrales ISR<br/>
+                <center>Sujeto a pagos trimestrales ISR</center><br/>
           </div>
         </xpath>
     </t>
