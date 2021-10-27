@@ -1,11 +1,37 @@
 odoo.define('pos_ticket_fel.OrderReceipt', function(require) {
     'use strict';
 
-
-
+    var models = require('point_of_sale.models');
     const OrderReceipt = require('point_of_sale.OrderReceipt');
     const Registries = require('point_of_sale.Registries');
     const { useState, useContext } = owl.hooks;
+
+    models.load_fields('account.journal','direccion');
+
+    models.load_models({
+        model: 'account.journal',
+        fields: [],
+        domain: function(self){ return [['direccion','!=',false]]; },
+        loaded: function(self,journals){
+            self.direccion_diario = "";
+            self.telefono = "";
+            if (journals.length > 0) {
+                console.log('EL SELF')
+                console.log(self.config.journal_id[0])
+
+                journals.forEach(function(journal) {
+                    console.log(journal.id)
+                    console.log(self.config.invoice_journal_id[0])
+                    if (journal.id == self.config.invoice_journal_id[0]){
+                        self.direccion_diario = journal.direccion;
+                        self.telefono = journal.telefono;
+                        console.log(self.direccion_diario)
+                    }
+                })
+
+            }
+        },
+    });
 
     const PosTicketFelOrderReceipt = OrderReceipt =>
         class extends OrderReceipt {
@@ -13,6 +39,9 @@ odoo.define('pos_ticket_fel.OrderReceipt', function(require) {
                 super(...arguments);
                 var order = this.env.pos.get_order();
                 var self = this;
+                console.log("self")
+                console.log(self)
+                console.log(order)
                 this.state = useState({
                   'cliente_id': order.get_client(),
                   'qr_string': false,
@@ -21,8 +50,9 @@ odoo.define('pos_ticket_fel.OrderReceipt', function(require) {
                   'feel_serie': false,
                   'feel_numero': false,
                   'nombre_diario': false,
-                  'direccion': false,
+                  'direccion': order.pos.direccion_diario,
                   'certificador_fel': false,
+                  'telefono': order.pos.telefono,
                 });
 
                 var state = this.state;
