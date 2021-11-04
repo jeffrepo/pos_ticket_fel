@@ -6,7 +6,7 @@ odoo.define('pos_ticket_fel.OrderReceipt', function(require) {
     const Registries = require('point_of_sale.Registries');
     const { useState, useContext } = owl.hooks;
 
-    models.load_fields('account.journal','direccion');
+    models.load_fields('account.journal','direccion_sucursal');
 
     models.load_models({
         model: 'account.journal',
@@ -23,7 +23,7 @@ odoo.define('pos_ticket_fel.OrderReceipt', function(require) {
                     console.log(journal.id)
                     console.log(self.config.invoice_journal_id[0])
                     if (journal.id == self.config.invoice_journal_id[0]){
-                        self.direccion_diario = journal.direccion;
+                        self.direccion_diario = journal.direccion_sucursal;
                         self.telefono = journal.telefono;
                         console.log(self.direccion_diario)
                     }
