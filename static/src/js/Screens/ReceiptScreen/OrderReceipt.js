@@ -7,26 +7,41 @@ odoo.define('pos_ticket_fel.OrderReceipt', function(require) {
     const { useState, useContext } = owl.hooks;
 
     models.load_fields('account.journal','direccion_sucursal');
+    models.load_fields('res.company','certificador');
+    models.load_fields('account.journal','direccion_id');
 
     models.load_models({
         model: 'account.journal',
         fields: [],
-        domain: function(self){ return [['direccion','!=',false]]; },
+        domain: function(self){ return []; },
         loaded: function(self,journals){
             self.direccion_diario = "";
             self.telefono = "";
             if (journals.length > 0) {
-                console.log('EL SELF')
-                console.log(self.config.journal_id[0])
-
                 journals.forEach(function(journal) {
-                    console.log(journal.id)
-                    console.log(self.config.invoice_journal_id[0])
-                    if (journal.id == self.config.invoice_journal_id[0]){
+                    if ('direccion' in journal){
                         self.direccion_diario = journal.direccion_sucursal;
-                        self.telefono = journal.telefono;
-                        console.log(self.direccion_diario)
+                        if (journal.id == self.config.invoice_journal_id[0]){
+                            self.direccion_diario = journal.direccion_sucursal || journal.direccion_id;
+                            self.telefono = journal.telefono;
+                        }
+                    }else{
+                        if('direccion_id' in journal){
+                            if (journal.id == self.config.invoice_journal_id[0]){
+                                self.rpc({
+                                  model: 'res.partner',
+                                  method: 'search_read',
+                                  args: [[['id', '=',   journal['direccion_id'][0]]], []],
+                              }, {
+                                  timeout: 5000,
+                              }).then(function (direc) {
+                                  self.direccion_diario = direc[0]['contact_address_complete'];
+                              });
+
+                            }
+                        }
                     }
+
                 })
 
             }
@@ -39,9 +54,6 @@ odoo.define('pos_ticket_fel.OrderReceipt', function(require) {
                 super(...arguments);
                 var order = this.env.pos.get_order();
                 var self = this;
-                console.log("self")
-                console.log(self)
-                console.log(order)
                 this.state = useState({
                   'cliente_id': order.get_client(),
                   'qr_string': false,
@@ -51,12 +63,11 @@ odoo.define('pos_ticket_fel.OrderReceipt', function(require) {
                   'feel_numero': false,
                   'nombre_diario': false,
                   'direccion': order.pos.direccion_diario,
-                  'certificador_fel': false,
+                  'certificador': order.pos.company.certificador,
                   'telefono': order.pos.telefono,
                 });
 
                 var state = this.state;
-                console.log(order)
                 self.rpc({
                     model: 'pos.order',
                     method: 'search_read',
@@ -65,8 +76,6 @@ odoo.define('pos_ticket_fel.OrderReceipt', function(require) {
                     timeout: 5000,
                 }).then(function (orders) {
                     if (orders.length > 0 && 'account_move' in orders[0] && orders[0]['account_move'].length > 0) {
-                        console.log(orders)
-                        console.log("primer rpc")
                           self.rpc({
                             model: 'account.move',
                             method: 'search_read',
@@ -75,14 +84,6 @@ odoo.define('pos_ticket_fel.OrderReceipt', function(require) {
                             timeout: 5000,
                         }).then(function (facturas) {
                             if (facturas.length > 0) {
-                                console.log('FACTURAS')
-                                console.log(facturas)
-
-                                // var receipt_env = self.get_receipt_render_env();
-                                //
-                                // console.log(order)
-
-
                                   self.rpc({
                                     model: 'account.journal',
                                     method: 'search_read',
@@ -90,29 +91,20 @@ odoo.define('pos_ticket_fel.OrderReceipt', function(require) {
                                 }, {
                                     timeout: 5000,
                                 }).then(function (diario) {
-                                    console.log(diario)
-                                    // var direccion_id = self.pos.db.get_partner_by_id(diario[0]['direccion_id'][0]);
-                                    // console.log(direccion_id)
-                                    // console.log(order)
-                                    state.feel_numero_autorizacion = facturas[0].feel_numero_autorizacion;
-                                    state.feel_serie = facturas[0].feel_serie;
-                                    state.feel_numero = facturas[0].feel_numero;
-                                    // state.nombre_diario = direccion_id.name;
-                                    // state.direccion = direccion_id.street +" " + direccion_id.street2 + ", " + direccion_id.city;
-                                    state.certificador_fel = 'DIGIFACT';
-                                    var link = ["https://felgtaws.digifact.com.gt/guest/api/FEL?DATA=",self.env.pos.company.vat.toString(), "%", "7C", facturas[0].feel_numero_autorizacion.toString(),"%7CGUESTUSERQR"].join('');
-                                    console.log(link)
+                                    state.feel_numero_autorizacion = facturas[0].feel_numero_autorizacion || facturas[0].fel_numero_autorizacion;
+                                    state.feel_serie = facturas[0].feel_serie || facturas[0].fel_serie;
+                                    state.feel_numero = facturas[0].feel_numero || facturas[0].fel_numero;
+                                    state.direccion = self.direccion_diario;
+                                    var link = "";
+                                    if (state.certificador == "INFILE"){
+                                        var link = ["https://report.feel.com.gt/ingfacereport/ingfacereport_documento?","uuid=",state.feel_numero_autorizacion.toString() ].join('');
+
+                                    }else{
+                                        var link = ["https://felgtaws.digifact.com.gt/guest/api/FEL?DATA=",self.env.pos.company.vat.toString(), "%", "7C", facturas[0].feel_numero_autorizacion.toString(),"%7CGUESTUSERQR"].join('');
+
+                                    }
                                     state.qr_string = link;
-                                  // console.log(receipt_env)
-                                  // self.$('.pos-receipt-container').html(QWeb.render('PosTicket', receipt_env));
                                 });
-                                // receipt_env['feel_uuid'] = facturas[0].feel_uuid;
-                                // receipt_env['feel_serie'] = facturas[0].feel_serie;
-                                // receipt_env['feel_numero'] = facturas[0].feel_serie;
-                                // receipt_env['certificador_fel'] = 'INFILE';
-                                //
-                                // console.log(receipt_env)
-                                // self.$('.pos-receipt-container').html(QWeb.render('PosTicket', receipt_env));
                             }
                         });
 

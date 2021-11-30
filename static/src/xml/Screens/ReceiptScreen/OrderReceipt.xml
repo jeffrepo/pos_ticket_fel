@@ -45,11 +45,22 @@
                         new QRCode(document.getElementById("qrcode"), qr_string);
                       </script>
 
-                      <div class="info_certificador">
-                          Certificador<br/>
-                          DIGIFACT, S.A.<br/>
-                          NIT: 77454820<br/>
-                      </div>
+
+                      <t t-if="state.certificador == 'INFILE'">
+                          <div class="info_certificador">
+                              Certificador<br/>
+                              INFILE, S.A.<br/>
+                              NIT: 12521337<br/>
+                          </div>
+                      </t>
+                      <t t-else="">
+                          <div class="info_certificador">
+                              Certificador<br/>
+                              DIGIFACT, S.A.<br/>
+                              NIT: 77454820<br/>
+                          </div>
+                      </t>
+
 
                         Autorización: <t t-esc="state.feel_numero_autorizacion || ''"/><br/>
                         Fecha Certificación: <t t-esc="receipt.date.localestring"/>

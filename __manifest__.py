@@ -10,7 +10,7 @@
     'description': """
 
 """,
-    'depends': ['point_of_sale','digifactfel'],
+    'depends': ['point_of_sale'],
     'data': [
         'views/templates.xml',
     ],
