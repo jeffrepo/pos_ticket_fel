@@ -6,7 +6,7 @@
             <!-- <t t-esc="state.nombre_diario"/><br/>
             <t t-esc="state.direccion"/><br/> -->
             <center>
-                <t t-esc="receipt.company.name"/><br/>
+                <t t-esc="state.nombre_comercial"/><br/>
                 <t t-esc="state.direccion"/><br/>
                 Tel: <t t-esc="state.telefono"/><br/>
                 NIT: <t t-esc="receipt.company.vat"/><br/>

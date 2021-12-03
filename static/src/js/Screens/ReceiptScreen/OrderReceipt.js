@@ -36,6 +36,7 @@ odoo.define('pos_ticket_fel.OrderReceipt', function(require) {
                                   timeout: 5000,
                               }).then(function (direc) {
                                   self.direccion_diario = direc[0]['contact_address_complete'];
+                                  self.nombre_comercial = journal.fel_nombre_comercial
                               });
 
                             }
@@ -62,6 +63,7 @@ odoo.define('pos_ticket_fel.OrderReceipt', function(require) {
                   'feel_serie': false,
                   'feel_numero': false,
                   'nombre_diario': false,
+                  'nombre_comercial': order.pos.nombre_comercial|| '',
                   'direccion': order.pos.direccion_diario,
                   'certificador': order.pos.company.certificador,
                   'telefono': order.pos.telefono,
