@@ -30,6 +30,9 @@
                 NIT: <t t-esc="receipt.client.vat ? receipt.client.vat : 'CF'"/><br/>
                 Nombre: <t t-esc="receipt.client.name"/><br/>
                 Dirección: <t t-esc="receipt.client.street ? receipt.client.street : 'Guatemala'"/><br/><br/>
+                <t t-if="state.contingencia">
+                    Numero de contingencia : <t t-esc="state.contingencia"/>
+                </t>
             </div>
 
         </xpath>

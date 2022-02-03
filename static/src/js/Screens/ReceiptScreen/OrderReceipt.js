@@ -1,14 +1,17 @@
 odoo.define('pos_ticket_fel.OrderReceipt', function(require) {
     'use strict';
 
-    var models = require('point_of_sale.models');
     const OrderReceipt = require('point_of_sale.OrderReceipt');
     const Registries = require('point_of_sale.Registries');
     const { useState, useContext } = owl.hooks;
+    const models = require('point_of_sale.models');
+    const pos_db = require('point_of_sale.DB');
+
 
     models.load_fields('account.journal','direccion_sucursal');
     models.load_fields('res.company','certificador');
     models.load_fields('account.journal','direccion_id');
+    models.load_fields('account.journal','feel_tipo_dte');
 
     models.load_models({
         model: 'account.journal',
@@ -17,13 +20,16 @@ odoo.define('pos_ticket_fel.OrderReceipt', function(require) {
         loaded: function(self,journals){
             self.direccion_diario = "";
             self.telefono = "";
+            self.tipo_dte = "";
             if (journals.length > 0) {
                 journals.forEach(function(journal) {
-                    if ('direccion' in journal){
+                    if ('direccion_sucursal' in journal || 'direccion' in journal){
                         self.direccion_diario = journal.direccion_sucursal;
                         if (journal.id == self.config.invoice_journal_id[0]){
                             self.direccion_diario = journal.direccion_sucursal || journal.direccion_id;
                             self.telefono = journal.telefono;
+                            self.tipo_dte = journal.feel_tipo_dte;
+                            console.log(self.tipo_dte)
                         }
                     }else{
                         if('direccion_id' in journal){
@@ -37,6 +43,8 @@ odoo.define('pos_ticket_fel.OrderReceipt', function(require) {
                               }).then(function (direc) {
                                   self.direccion_diario = direc[0]['contact_address_complete'];
                                   self.nombre_comercial = journal.fel_nombre_comercial
+                                  self.tipo_dte = journal.feel_tipo_dte;
+                                  console.log(self.tipo_dte)
                               });
 
                             }
@@ -67,9 +75,20 @@ odoo.define('pos_ticket_fel.OrderReceipt', function(require) {
                   'direccion': order.pos.direccion_diario,
                   'certificador': order.pos.company.certificador,
                   'telefono': order.pos.telefono,
+                  'contingencia': false,
                 });
-
                 var state = this.state;
+
+
+                var odoo_sync = this.env.pos.get('synch');
+                if (odoo_sync && 'status' in odoo_sync &&  odoo_sync['status'] == "disconnected" && order.to_invoice == true){
+                    var numero_uno = "1"
+                    var nuevo_uid = order.uid.replace(/[^a-zA-Z0-9 ]/g, '');
+                    var contingencia = parseInt(numero_uno + nuevo_uid.substr(nuevo_uid.length - 6)) + 100000000;
+                    order.set_contingencia(contingencia);
+                    state.contingencia = contingencia;
+                }
+
                 self.rpc({
                     model: 'pos.order',
                     method: 'search_read',
@@ -117,7 +136,52 @@ odoo.define('pos_ticket_fel.OrderReceipt', function(require) {
             }
         };
 
+        var _super_order = models.Order.prototype;
+        models.Order = models.Order.extend({
+          get_contingencia: function(){
+              return this.get('contingencia');
+          },
+          set_contingencia: function(contingencia){
+              this.set('contingencia', contingencia);
+          },
 
+          // init_from_JSON: function(json) {
+          //     _super_order.init_from_JSON.apply(this,arguments);
+          //     this.contingencia = this.contingencia;
+          // },
+
+          export_as_JSON: function() {
+              var json = _super_order.export_as_JSON.apply(this,arguments);
+
+              var odoo_sync = this.pos.get('synch');
+              if (odoo_sync && 'status' in odoo_sync &&  odoo_sync['status'] == "disconnected" && this.to_invoice == true){
+                  var numero_uno = "1"
+                  var nuevo_uid = this.uid.replace(/[^a-zA-Z0-9 ]/g, '');
+                  this.set_contingencia( parseInt(numero_uno + nuevo_uid.substr(nuevo_uid.length - 6)) + 100000000);
+              }
+              this.revisar_contingencias(this.pos.db.get_orders());
+              json.contingencia = this.get_contingencia();
+
+              return json
+          },
+
+
+          revisar_contingencias: function(ordenes){
+              ordenes.forEach(function(orden) {
+                  if (orden.to_invoice == true){
+                      if (orden.data.uid){
+                        var numero_uno = "1"
+                        var nuevo_uid = orden.data.uid.replace(/[^a-zA-Z0-9 ]/g, '');
+                        orden.data.contingencia = parseInt(numero_uno + nuevo_uid.substr(nuevo_uid.length - 6)) + 100000000;
+                      }
+                  }
+
+
+              });
+          },
+
+
+        })
 
     Registries.Component.extend(OrderReceipt, PosTicketFelOrderReceipt);
 

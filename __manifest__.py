@@ -13,6 +13,7 @@
     'depends': ['point_of_sale'],
     'data': [
         'views/templates.xml',
+        'views/pos_order_view.xml',
     ],
     'qweb': [
         'static/src/xml/Screens/ReceiptScreen/OrderReceipt.xml',
