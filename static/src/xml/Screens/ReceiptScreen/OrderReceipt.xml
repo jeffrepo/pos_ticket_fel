@@ -5,6 +5,13 @@
         <xpath expr="//div[hasclass('pos-receipt-contact')]" position="replace">
             <!-- <t t-esc="state.nombre_diario"/><br/>
             <t t-esc="state.direccion"/><br/> -->
+            <t t-if="state.acceso">
+                <center>
+                    Documento en contingencia<br/>
+                    <b>Factura</b><br/>
+                    <b>Número de acceso : <t t-esc="state.acceso"/></b><br/>
+                </center>
+            </t>
             <center>
                 <t t-esc="state.nombre_comercial"/><br/>
                 <t t-esc="state.direccion"/><br/>
@@ -30,9 +37,6 @@
                 NIT: <t t-esc="receipt.client.vat ? receipt.client.vat : 'CF'"/><br/>
                 Nombre: <t t-esc="receipt.client.name"/><br/>
                 Dirección: <t t-esc="receipt.client.street ? receipt.client.street : 'Guatemala'"/><br/><br/>
-                <t t-if="state.contingencia">
-                    Numero de contingencia : <t t-esc="state.contingencia"/>
-                </t>
             </div>
 
         </xpath>
@@ -69,7 +73,15 @@
                         Fecha Certificación: <t t-esc="receipt.date.localestring"/>
                   </center>
                 </t>
-                <center>Sujeto a pagos trimestrales ISR</center><br/>
+                <t t-if="state.acceso">
+                    <center>
+                        Emisión en contingencia, obtenga su DTE certificado en el sitio web:<br/>
+                        wwww.sat.gob.gt/fel
+                    </center>
+                </t>
+                <t t-else="">
+                    <center>Sujeto a pagos trimestrales ISR</center><br/>
+                </t>
           </div>
         </xpath>
     </t>

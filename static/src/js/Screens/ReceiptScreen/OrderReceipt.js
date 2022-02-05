@@ -75,7 +75,7 @@ odoo.define('pos_ticket_fel.OrderReceipt', function(require) {
                   'direccion': order.pos.direccion_diario,
                   'certificador': order.pos.company.certificador,
                   'telefono': order.pos.telefono,
-                  'contingencia': false,
+                  'acceso': false,
                 });
                 var state = this.state;
 
@@ -84,9 +84,9 @@ odoo.define('pos_ticket_fel.OrderReceipt', function(require) {
                 if (odoo_sync && 'status' in odoo_sync &&  odoo_sync['status'] == "disconnected" && order.to_invoice == true){
                     var numero_uno = "1"
                     var nuevo_uid = order.uid.replace(/[^a-zA-Z0-9 ]/g, '');
-                    var contingencia = parseInt(numero_uno + nuevo_uid.substr(nuevo_uid.length - 6)) + 100000000;
-                    order.set_contingencia(contingencia);
-                    state.contingencia = contingencia;
+                    var acceso = parseInt(numero_uno + nuevo_uid.substr(nuevo_uid.length - 6)) + 100000000;
+                    order.set_acceso(acceso);
+                    state.acceso = acceso;
                 }
 
                 self.rpc({
@@ -138,11 +138,11 @@ odoo.define('pos_ticket_fel.OrderReceipt', function(require) {
 
         var _super_order = models.Order.prototype;
         models.Order = models.Order.extend({
-          get_contingencia: function(){
-              return this.get('contingencia');
+          get_acceso: function(){
+              return this.get('acceso');
           },
-          set_contingencia: function(contingencia){
-              this.set('contingencia', contingencia);
+          set_acceso: function(acceso){
+              this.set('acceso', acceso);
           },
 
           // init_from_JSON: function(json) {
@@ -157,10 +157,10 @@ odoo.define('pos_ticket_fel.OrderReceipt', function(require) {
               if (odoo_sync && 'status' in odoo_sync &&  odoo_sync['status'] == "disconnected" && this.to_invoice == true){
                   var numero_uno = "1"
                   var nuevo_uid = this.uid.replace(/[^a-zA-Z0-9 ]/g, '');
-                  this.set_contingencia( parseInt(numero_uno + nuevo_uid.substr(nuevo_uid.length - 6)) + 100000000);
+                  this.set_acceso( parseInt(numero_uno + nuevo_uid.substr(nuevo_uid.length - 6)) + 100000000);
               }
               this.revisar_contingencias(this.pos.db.get_orders());
-              json.contingencia = this.get_contingencia();
+              json.acceso = this.get_acceso();
 
               return json
           },
@@ -172,7 +172,7 @@ odoo.define('pos_ticket_fel.OrderReceipt', function(require) {
                       if (orden.data.uid){
                         var numero_uno = "1"
                         var nuevo_uid = orden.data.uid.replace(/[^a-zA-Z0-9 ]/g, '');
-                        orden.data.contingencia = parseInt(numero_uno + nuevo_uid.substr(nuevo_uid.length - 6)) + 100000000;
+                        orden.data.acceso = parseInt(numero_uno + nuevo_uid.substr(nuevo_uid.length - 6)) + 100000000;
                       }
                   }
 
