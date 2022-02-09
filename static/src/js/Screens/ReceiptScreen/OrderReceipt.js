@@ -29,7 +29,6 @@ odoo.define('pos_ticket_fel.OrderReceipt', function(require) {
                             self.direccion_diario = journal.direccion_sucursal || journal.direccion_id;
                             self.telefono = journal.telefono;
                             self.tipo_dte = journal.feel_tipo_dte;
-                            console.log(self.tipo_dte)
                         }
                     }else{
                         if('direccion_id' in journal){
@@ -44,7 +43,6 @@ odoo.define('pos_ticket_fel.OrderReceipt', function(require) {
                                   self.direccion_diario = direc[0]['contact_address_complete'];
                                   self.nombre_comercial = journal.fel_nombre_comercial
                                   self.tipo_dte = journal.feel_tipo_dte;
-                                  console.log(self.tipo_dte)
                               });
 
                             }
@@ -145,10 +143,10 @@ odoo.define('pos_ticket_fel.OrderReceipt', function(require) {
               this.set('acceso', acceso);
           },
 
-          // init_from_JSON: function(json) {
-          //     _super_order.init_from_JSON.apply(this,arguments);
-          //     this.contingencia = this.contingencia;
-          // },
+          init_from_JSON: function(json) {
+              _super_order.init_from_JSON.apply(this,arguments);
+              this.acceso = this.get_acceso();
+          },
 
           export_as_JSON: function() {
               var json = _super_order.export_as_JSON.apply(this,arguments);
@@ -161,7 +159,6 @@ odoo.define('pos_ticket_fel.OrderReceipt', function(require) {
               }
               this.revisar_contingencias(this.pos.db.get_orders());
               json.acceso = this.get_acceso();
-
               return json
           },
 
@@ -173,6 +170,8 @@ odoo.define('pos_ticket_fel.OrderReceipt', function(require) {
                         var numero_uno = "1"
                         var nuevo_uid = orden.data.uid.replace(/[^a-zA-Z0-9 ]/g, '');
                         orden.data.acceso = parseInt(numero_uno + nuevo_uid.substr(nuevo_uid.length - 6)) + 100000000;
+                        orden.acceso = parseInt(numero_uno + nuevo_uid.substr(nuevo_uid.length - 6)) + 100000000;
+                        // this.set_acceso(parseInt(numero_uno + nuevo_uid.substr(nuevo_uid.length - 6)) + 100000000)
                       }
                   }
 

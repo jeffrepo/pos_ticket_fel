@@ -10,6 +10,6 @@ class PosOrder(models.Model):
     @api.model
     def _order_fields(self, ui_order):
         res = super(PosOrder, self)._order_fields(ui_order)
-        if 'contingencia' in ui_order:
-            res['acceso'] = ui_order['contingencia']
+        if 'acceso' in ui_order:
+            res['acceso'] = ui_order['acceso']
         return res
