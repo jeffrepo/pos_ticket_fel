@@ -76,7 +76,7 @@
                 <t t-if="state.acceso">
                     <center>
                         Emisión en contingencia, obtenga su DTE certificado en el sitio web:<br/>
-                        wwww.sat.gob.gt/fel
+                        https://portal.sat.gob.gt/portal/verificador-publico-de-dte/
                     </center>
                 </t>
                 <t t-else="">
