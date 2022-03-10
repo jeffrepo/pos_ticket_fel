@@ -12,12 +12,21 @@
 """,
     'depends': ['point_of_sale'],
     'data': [
-        'views/templates.xml',
         'views/pos_order_view.xml',
     ],
-    'qweb': [
-        'static/src/xml/Screens/ReceiptScreen/OrderReceipt.xml',
-    ],
+    'assets': {
+        'point_of_sale.assets': [
+            'pos_ticket_fel/static/src/css/pos_ticket_fel.css',
+            'pos_ticket_fel/static/src/js/qrcode.js',
+            'pos_ticket_fel/static/src/js/Screens/ReceiptScreen/OrderReceipt.js',
+            'pos_ticket_fel/static/src/xml/Screens/ReceiptScreen/OrderReceipt.xml',
+        ],
+        'web.assets_qweb': [
+            'pos_ticket_fel/static/src/xml/**/*',
+        ],
+    },
+    'license': 'LGPL-3',
+
     'installable': True,
     'auto_install': False,
 }
