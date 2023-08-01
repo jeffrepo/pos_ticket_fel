@@ -12,6 +12,8 @@ odoo.define('pos_ticket_fel.OrderReceipt', function(require) {
     models.load_fields('res.company','certificador');
     models.load_fields('account.journal','direccion_id');
     models.load_fields('account.journal','feel_tipo_dte');
+    models.load_fields('account.journal','feel_nombre_comercial');
+    models.load_fields('res.company', 'company_registry');
 
     models.load_models({
         model: 'account.journal',
@@ -24,11 +26,11 @@ odoo.define('pos_ticket_fel.OrderReceipt', function(require) {
             if (journals.length > 0) {
                 journals.forEach(function(journal) {
                     if ('direccion_sucursal' in journal || 'direccion' in journal){
-                        self.direccion_diario = journal.direccion_sucursal;
                         if (journal.id == self.config.invoice_journal_id[0]){
                             self.direccion_diario = journal.direccion_sucursal || journal.direccion_id;
                             self.telefono = journal.telefono;
                             self.tipo_dte = journal.feel_tipo_dte;
+                            self.nombre_comercial = journal.feel_nombre_comercial
                         }
                     }else{
                         if('direccion_id' in journal){
@@ -41,7 +43,7 @@ odoo.define('pos_ticket_fel.OrderReceipt', function(require) {
                                   timeout: 5000,
                               }).then(function (direc) {
                                   self.direccion_diario = direc[0]['contact_address_complete'];
-                                  self.nombre_comercial = journal.fel_nombre_comercial
+                                  self.nombre_comercial = journal.feel_nombre_comercial
                                   self.tipo_dte = journal.feel_tipo_dte;
                               });
 
@@ -113,7 +115,7 @@ odoo.define('pos_ticket_fel.OrderReceipt', function(require) {
                                     state.feel_numero_autorizacion = facturas[0].feel_numero_autorizacion || facturas[0].fel_numero_autorizacion;
                                     state.feel_serie = facturas[0].feel_serie || facturas[0].fel_serie;
                                     state.feel_numero = facturas[0].feel_numero || facturas[0].fel_numero;
-                                    state.direccion = self.direccion_diario;
+                                    // state.direccion = self.direccion_diario;
                                     var link = "";
                                     if (state.certificador == "INFILE"){
                                         var link = ["https://report.feel.com.gt/ingfacereport/ingfacereport_documento?","uuid=",state.feel_numero_autorizacion.toString() ].join('');

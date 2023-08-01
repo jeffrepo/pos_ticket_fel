@@ -14,7 +14,7 @@
             </t>
             <center>
                 <t t-esc="state.nombre_comercial"/><br/>
-                <t t-esc="state.direccion"/><br/>
+                <t t-if="state.direccion"><t t-esc="state.direccion"/></t><br/>
                 Tel: <t t-esc="state.telefono"/><br/>
                 NIT: <t t-esc="receipt.company.vat"/><br/>
                 <t t-if="receipt.company.company_registry">
