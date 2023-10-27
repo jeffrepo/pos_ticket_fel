@@ -13,3 +13,10 @@ class PosOrder(models.Model):
         if 'acceso' in ui_order:
             res['acceso'] = ui_order['acceso']
         return res
+
+class AccountJournal(models.Model):
+    _inherit = "account.journal"
+
+    direccion_sucursal = fields.Char('Dirección')
+    telefono = fields.Char('Teléfono')
+    encabezado_ticket = fields.Char('Encabezado ticket')
