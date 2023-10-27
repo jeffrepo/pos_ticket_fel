@@ -10,7 +10,7 @@
     'description': """
 
 """,
-    'depends': ['point_of_sale'],
+    'depends': ['point_of_sale','account'],
     'data': [
         'views/templates.xml',
         'views/pos_order_view.xml',
