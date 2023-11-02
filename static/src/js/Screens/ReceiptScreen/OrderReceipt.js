@@ -118,7 +118,7 @@ odoo.define('pos_ticket_fel.OrderReceipt', function(require) {
                                     // state.direccion = self.direccion_diario;
                                     var link = "";
                                     if (state.certificador == "INFILE"){
-                                        var link = ["https://report.feel.com.gt/ingfacereport/ingfacereport_documento?","uuid=",state.feel_numero_autorizacion.toString() ].join('');
+                                        var link = ["https://report.feel.com.gt/ingfacereport/ingfacereport_documento?","uuid=",state.fel_numero_autorizacion.toString() ].join('');
 
                                     }else{
                                         var link = ["https://felgtaws.digifact.com.gt/guest/api/FEL?DATA=",self.env.pos.company.vat.toString(), "%", "7C", facturas[0].feel_numero_autorizacion.toString(),"%7CGUESTUSERQR"].join('');
