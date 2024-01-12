@@ -13,9 +13,10 @@
                 </center>
             </t>
             <center>
+                <t t-esc="receipt.company.name"/><br/>
                 <t t-esc="state.nombre_comercial"/><br/>
                 <t t-esc="state.direccion"/><br/>
-                Tel: <t t-esc="state.telefono"/><br/>
+                Tel: <t t-esc="receipt.company.phone"/><br/>
                 NIT: <t t-esc="receipt.company.vat"/><br/>
                 <t t-if="receipt.company.company_registry">
                     <t t-esc="receipt.company.company_registry"/>
