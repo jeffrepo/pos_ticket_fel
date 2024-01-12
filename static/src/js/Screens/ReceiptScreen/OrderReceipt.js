@@ -113,7 +113,7 @@ odoo.define('pos_ticket_fel.OrderReceipt', function(require) {
                                     state.feel_numero_autorizacion = facturas[0].feel_numero_autorizacion || facturas[0].fel_numero_autorizacion;
                                     state.feel_serie = facturas[0].feel_serie || facturas[0].fel_serie;
                                     state.feel_numero = facturas[0].feel_numero || facturas[0].fel_numero;
-                                    state.direccion = self.direccion_diario;
+                                    // state.direccion = self.direccion_diario;
                                     var link = "";
                                     if (state.certificador == "INFILE"){
                                         var link = ["https://report.feel.com.gt/ingfacereport/ingfacereport_documento?","uuid=",state.feel_numero_autorizacion.toString() ].join('');
