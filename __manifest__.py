@@ -20,6 +20,7 @@
             'pos_ticket_fel/static/src/js/qrcode.js',
             'pos_ticket_fel/static/src/js/Screens/ReceiptScreen/OrderReceipt.js',
             'pos_ticket_fel/static/src/xml/Screens/ReceiptScreen/OrderReceipt.xml',
+            'pos_ticket_fel/static/src/js/Screens/ClientListScreen/ClientDetailsEdit.js',
         ],
         'web.assets_qweb': [
             'pos_ticket_fel/static/src/xml/**/*',
