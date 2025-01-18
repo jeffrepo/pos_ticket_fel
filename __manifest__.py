@@ -15,14 +15,8 @@
         'views/pos_order_view.xml',
     ],
     'assets': {
-        'point_of_sale.assets': [
-            'pos_ticket_fel/static/src/css/pos_ticket_fel.css',
-            'pos_ticket_fel/static/src/js/qrcode.js',
-            'pos_ticket_fel/static/src/js/Screens/ReceiptScreen/OrderReceipt.js',
-            'pos_ticket_fel/static/src/xml/Screens/ReceiptScreen/OrderReceipt.xml',
-        ],
-        'web.assets_qweb': [
-            'pos_ticket_fel/static/src/xml/**/*',
+        'point_of_sale._assets_pos': [
+            'pos_ticket_fel/static/src/**/*',
         ],
     },
     'license': 'LGPL-3',
